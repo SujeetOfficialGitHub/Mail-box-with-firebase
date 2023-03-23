@@ -1,8 +1,11 @@
 import React from 'react'
+import ComposeMail from '../components/mails/ComposeMail'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+        <ComposeMail />
+    </div>
   )
 }
 

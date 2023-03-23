@@ -23,7 +23,7 @@ const Login = () => {
                 console.log("Sign up successfully")
                 inputEmailRef.current.value = '';
                 inputPasswordRef.current.value = '';
-                authCtx.login(res.data.idToken)
+                authCtx.login(res.data.idToken, res.data.email.replace('@','').replace('.',''))
                 navigate('/')
             }else{
                 throw new Error('Registration Failed')
