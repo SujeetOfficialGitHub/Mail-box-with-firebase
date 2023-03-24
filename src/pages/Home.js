@@ -3,7 +3,7 @@ import ComposeMail from '../components/mails/ComposeMail'
 import SentMails from '../components/mails/SentMails'
 import { Tab, Tabs } from 'react-bootstrap'
 import Inbox from '../components/mails/Inbox'
-import ReceivedMailRequest from '../components/http/received-mail'
+import ReceivedMailRequest from '../http/received-mail'
 
 const Home = () => {
   let count = 0;

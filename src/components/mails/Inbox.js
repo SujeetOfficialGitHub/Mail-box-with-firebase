@@ -1,6 +1,6 @@
 
 import ReceivedMailView from './ReceivedMailsView'
-import ReceivedMailRequest from '../http/received-mail'
+import ReceivedMailRequest from '../../http/received-mail'
 
 const Inbox = () => {
     const receivedAllMails = ReceivedMailRequest()
