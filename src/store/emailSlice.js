@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 const initialEmailState = {
     recievedEmails: [],
     sentEmails: [],
@@ -29,9 +30,16 @@ const emailSlice = createSlice({
                 subject: sentEmail.subject,
                 message: sentEmail.message,
             })
-
+        },
+        increaseUnreadEmail(state){
+            state.unread = state.unread + 1
+        },
+        decreaseUnreadEmail(state){
+            if (state.unread > 0){
+                state.unread = state.unread - 1
+            }
         }
-    }
+    },
 })
 export const emailActions = emailSlice.actions;
 export default emailSlice

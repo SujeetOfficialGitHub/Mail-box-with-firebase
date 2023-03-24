@@ -2,8 +2,7 @@ import axios from 'axios';
 import React, {useState} from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { emailActions } from '../../store/emailSlice';
-
+import {emailActions} from '../../store/emailSlice'
 
 const ReceivedMailsView = (props) => {
     const [show, setShow] = useState(false);
@@ -17,7 +16,7 @@ const ReceivedMailsView = (props) => {
             const res = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`,{read: false});
             if (res.status === 200){
                 setShow(true);
-                dispatch(emailActions.recievedEmails({...props, read: false }))
+                dispatch(emailActions.recievedEmails({...props, read: false}))
             }
         }catch(error){
             console.log(error)
@@ -25,7 +24,7 @@ const ReceivedMailsView = (props) => {
     }
     const handleDelete = async() => {
         try{
-            const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`,{read: false});
+            const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`);
             if (res.status === 200){
                 setShow(true);
             }

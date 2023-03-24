@@ -3,8 +3,22 @@ import ComposeMail from '../components/mails/ComposeMail'
 import SentMails from '../components/mails/SentMails'
 import { Tab, Tabs } from 'react-bootstrap'
 import Inbox from '../components/mails/Inbox'
+import { useSelector } from 'react-redux'
+import ReceivedMailRequest from '../components/http/received-mail'
 
 const Home = () => {
+  let count = 0;
+  const result = ReceivedMailRequest()
+  if (result.length === 0){
+    count = 0
+  }else{
+    result.forEach((item) => {
+      if (item.read === true){
+        count++
+      }
+    })
+  }
+
   return (
     <div>
         <Tabs
@@ -15,7 +29,7 @@ const Home = () => {
       <Tab eventKey="home" title="Send Mails">
         <ComposeMail />
       </Tab>
-      <Tab eventKey="inbox" title="Inbox">
+      <Tab eventKey="inbox" title={`Inbox ${count > 0 ? count : ''}`}>
         <Inbox />
       </Tab>
       <Tab eventKey="sent-mail" title="Sent">
