@@ -12,12 +12,12 @@ const Inbox = () => {
     <div>
         {receivedAllMails.map((receivedEmail) => (
             <ReceivedMailView 
-                key={receivedEmail.id}
-                id=  {receivedEmail.id}
-                from=  {receivedEmail.from}
-                subject=  {receivedEmail.subject}
-                message=  {receivedEmail.message}
-                read = {receivedEmail.read}
+            key={receivedEmail.id}
+            id=  {receivedEmail.id}
+            from=  {receivedEmail.from}
+            subject=  {receivedEmail.subject}
+            message=  {receivedEmail.message}
+            read = {receivedEmail.read}
             />
         ))}
     </div>

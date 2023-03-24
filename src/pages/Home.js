@@ -3,7 +3,6 @@ import ComposeMail from '../components/mails/ComposeMail'
 import SentMails from '../components/mails/SentMails'
 import { Tab, Tabs } from 'react-bootstrap'
 import Inbox from '../components/mails/Inbox'
-import { useSelector } from 'react-redux'
 import ReceivedMailRequest from '../components/http/received-mail'
 
 const Home = () => {
