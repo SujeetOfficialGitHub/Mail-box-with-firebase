@@ -16,7 +16,6 @@ function App() {
     <>
       <Header/>
       <Routes>
-        {console.log(isLoggedIn)}
         <Route path='/' element={isLoggedIn ? <Home /> : <Navigate replace to='/login' />} />
       
         <Route path='/signup' element={!isLoggedIn ? <Signup /> : <Navigate replace to='/' />} /> 

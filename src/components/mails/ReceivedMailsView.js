@@ -26,6 +26,7 @@ const ReceivedMailsView = (props) => {
         try{
             const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`);
             if (res.status === 200){
+                dispatch(emailActions.deleteMail({...props}))
                 console.log('Email deleted successfully')
             }
         }catch(error){

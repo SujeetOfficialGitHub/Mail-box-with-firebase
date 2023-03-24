@@ -1,11 +1,13 @@
 import React, {useState} from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { emailActions } from '../../store/emailSlice';
 
 const SentMailView = (props) => {
     const [show, setShow] = useState(false);
     const email = useSelector(state => state.auth.email)
+    const dispatch = useDispatch()
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -13,11 +15,13 @@ const SentMailView = (props) => {
         try{
             const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/sent/${props.id}.json`);
             if (res.status === 200){
-                setShow(false)
+                dispatch(emailActions.deleteMail({...props}))
+                console.log('Email deleted successfully')
             }
         }catch(error){
             console.log(error)
         }
+        setShow(false)
     }
   return (
     <div key={props.id} className='border mx-auto m-2 p-1' style={{maxWidth: '30rem', cursor: 'pointer'}}>

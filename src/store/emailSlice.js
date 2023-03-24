@@ -31,14 +31,19 @@ const emailSlice = createSlice({
                 message: sentEmail.message,
             })
         },
-        increaseUnreadEmail(state){
-            state.unread = state.unread + 1
-        },
-        decreaseUnreadEmail(state){
-            if (state.unread > 0){
-                state.unread = state.unread - 1
-            }
+        deleteMail(state, action){
+            state.recievedEmails = state.recievedEmails.filter(item => {
+                return item.id !== action.payload.id
+            })
         }
+        // increaseUnreadEmail(state){
+        //     state.unread = state.unread + 1
+        // },
+        // decreaseUnreadEmail(state){
+        //     if (state.unread > 0){
+        //         state.unread = state.unread - 1
+        //     }
+        // }
     },
 })
 export const emailActions = emailSlice.actions;

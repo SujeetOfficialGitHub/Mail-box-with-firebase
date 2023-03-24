@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import SentMailView from './SentMailView';
 // import AllSentMails from '../../http/all-sent-mails';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const SentMails = () => {
   const [sentAllMails, setsentAllMails] = useState([])
@@ -22,10 +22,12 @@ const SentMails = () => {
         fetchAllSentMails()
     },[email, remail])
     if (sentAllMails === null){
-      return ''
+      return <h1>No mails found</h1>
+
     }
     const result = Object.values(sentAllMails);
     result.reverse();
+
 
   return (
     <div>

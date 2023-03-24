@@ -5,7 +5,7 @@ import ReceivedMailRequest from '../http/received-mail'
 const Inbox = () => {
     const receivedAllMails = ReceivedMailRequest()
     if (receivedAllMails.length === 0){
-        return <h1>No mail found</h1>
+        return <h1>No mails found</h1>
     }
 
   return (
