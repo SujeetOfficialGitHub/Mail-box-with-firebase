@@ -1,17 +1,21 @@
-import React, { useContext } from 'react'
-import { NavLink } from 'react-router-dom'
+import React from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Navbar, Nav, Container, Button } from 'react-bootstrap'
-import AuthContext from '../store/auth-context'
+import { useDispatch, useSelector } from 'react-redux'
+import { authActions } from '../store/authSlice'
 const Header = () => {
-    const authCtx = useContext(AuthContext)
-    const isLoggedIn = localStorage.getItem('token')
+    const isLoggedIn = useSelector(state => state.auth.isLoggedIn)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const logoutHandler = () => {
-        authCtx.logout()
+        dispatch(authActions.logout())
+        navigate('/login')
     }
   return (
     <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+          <Navbar.Brand href="#home">Mail Box</Navbar.Brand>
           <Nav className="me-auto">
             <NavLink className="nav-link" to="/">Home</NavLink>
             {!isLoggedIn && 

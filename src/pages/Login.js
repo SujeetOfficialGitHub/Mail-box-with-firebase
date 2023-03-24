@@ -1,8 +1,9 @@
 import axios from 'axios'
-import React, {useRef, useState, useContext} from 'react'
+import React, {useRef, useState} from 'react'
 import { Form, Button } from 'react-bootstrap'
+import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import AuthContext from '../store/auth-context'
+import { authActions } from '../store/authSlice'
 
 const Login = () => {
     const [error, setError] = useState()
@@ -10,7 +11,7 @@ const Login = () => {
     const inputPasswordRef = useRef()
 
     const navigate = useNavigate()
-    const authCtx = useContext(AuthContext)
+    const dispatch = useDispatch()
 
     const submitHandler = async(e) => {
         e.preventDefault()
@@ -20,16 +21,20 @@ const Login = () => {
             const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDnOhETHoXsPijC-qmGQwUAOmngQVCJ3N4`,
             {email: email, password: password, returnSecureToken: true})
             if (res.status === 200){
-                console.log("Sign up successfully")
+                console.log(res)
+                const data = await res.data
                 inputEmailRef.current.value = '';
                 inputPasswordRef.current.value = '';
-                authCtx.login(res.data.idToken, res.data.email.replace('@','').replace('.',''))
+
+                dispatch(authActions.login({token: data.token, email: data.email}))
+                console.log("Login successfully")
                 navigate('/')
             }else{
                 throw new Error('Registration Failed')
             }
         }catch(error){
-            setError(error.response.data.error.message)
+            console.log(error)
+            setError(error.message)
         }
     }
     if (error){

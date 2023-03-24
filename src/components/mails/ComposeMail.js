@@ -1,17 +1,15 @@
-import React, { useState, useRef, useContext, useMemo } from 'react';
-import { EditorState, convertToRaw, convertFromHTML, convertFromRaw } from 'draft-js';
+import React, { useState, useRef} from 'react';
+import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { Form, Button } from 'react-bootstrap';
-import AuthContext from '../../store/auth-context';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { emailActions } from '../../store/emailSlice';
 import draftToHtml from 'draftjs-to-html';
 // import htmlToDraft from 'html-to-draftjs';
 
 
 const ComposeMail = () => {
-    // const [message, setMessage] = useState('This is the messade');
     const [editorState, setEditorState] = useState(() =>
             EditorState.createEmpty()
         );
@@ -19,7 +17,7 @@ const ComposeMail = () => {
     const emailInputRef = useRef();
     const subjectInputRef = useRef()
     
-    const authCtx = useContext(AuthContext)
+    const email = useSelector(state => state.auth.email)
     const dispatch = useDispatch();
 
     const messageHandler = (e) => {
@@ -35,7 +33,7 @@ const ComposeMail = () => {
         const enteredSubject = subjectInputRef.current.value;
 
         const receiverEmail = enteredEmail.replace('@','').replace('.','');
-        const senderEmail = authCtx.email;
+        const senderEmail = email;
 
         const objSent = {
             to: receiverEmail,
@@ -47,11 +45,11 @@ const ComposeMail = () => {
             const res = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${senderEmail}/sent.json`, objSent);
             if (res.status === 200){
                 const data = await res.data;
-                const backRes = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${senderEmail}/sent/${data.name}.json`, {id: data.name});
+                const backRes = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${senderEmail}/sent/${data.name}.json`, {id: data.name});
                 if (backRes.status === 200){
                     dispatch(emailActions.sentBox({
                         id: data.name,
-                        to: objSent.to,
+                        to: enteredEmail,
                         subject: objSent.subject,
                         message: objSent.message
                     }))
@@ -71,11 +69,11 @@ const ComposeMail = () => {
             const res = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${receiverEmail}/received.json`, objReceived);
             if (res.status === 200){
                 const data = await res.data
-                const backRes = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${receiverEmail}/received/${data.name}.json`, {id:data.name, read: true});
+                const backRes = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${receiverEmail}/received/${data.name}.json`, {id:data.name, read: true});
                 if (backRes.status === 200){
                     dispatch(emailActions.recievedEmails({
                         id: data.name,
-                        from: objReceived.from,
+                        from: enteredEmail,
                         subject: objReceived.subject,
                         message: objReceived.message,
                         read: true
@@ -134,14 +132,6 @@ const ComposeMail = () => {
             </Form.Group>
             <Button type="submit">Send</Button>
         </Form>
-        <div>
-         
-          {/* <div
-            dangerouslySetInnerHTML={{
-              __html: messData
-            }}
-          /> */}
-        </div>
     </div>
   )
 }
