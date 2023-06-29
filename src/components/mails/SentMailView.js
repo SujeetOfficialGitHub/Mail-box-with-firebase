@@ -13,7 +13,7 @@ const SentMailView = (props) => {
     const handleShow = () => setShow(true);
     const handleDelete = async() => {
         try{
-            const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/sent/${props.id}.json`);
+            const res = await axios.delete(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${email}/sent/${props.id}.json`);
             if (res.status === 200){
                 dispatch(emailActions.deleteMail({...props}))
                 console.log('Email deleted successfully')

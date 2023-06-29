@@ -1,141 +1,99 @@
-import React, { useState, useRef} from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
+import React, { useState} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+
+import './ComposeMail.css'
 import { emailActions } from '../../store/emailSlice';
-import draftToHtml from 'draftjs-to-html';
-// import htmlToDraft from 'html-to-draftjs';
+import RichTextEditor from './RichTextEditor';
 
-
+// Convert html to plain text 
+function htmlToPlainText(html) {
+    const temporaryElement = document.createElement('div');
+    temporaryElement.innerHTML = html;
+    return temporaryElement.textContent || temporaryElement.innerText;
+}
 
 const ComposeMail = () => {
-    const [editorState, setEditorState] = useState(() =>
-            EditorState.createEmpty()
-        );
+    const [toEmail, setToEmail] = useState('');
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
 
-    const emailInputRef = useRef();
-    const subjectInputRef = useRef()
-    
     const email = useSelector(state => state.auth.email)
     const dispatch = useDispatch();
 
-    const messageHandler = (e) => {
-        setEditorState(e)
-        
-    }
-    // console.log(editorState)
-    const message = draftToHtml(convertToRaw(editorState.getCurrentContent()))
 
     const submitHandler = async(e) => {
         e.preventDefault()
-        const enteredEmail = emailInputRef.current.value;
-        const enteredSubject = subjectInputRef.current.value;
+        const plainTextMessage = htmlToPlainText(message);
 
-        const receiverEmail = enteredEmail.replace('@','').replace('.','');
+        const receiverEmail = toEmail.replace('@','').replace('.','');
         const senderEmail = email;
 
         const objSent = {
             to: receiverEmail,
-            subject: enteredSubject,
-            message: message,
+            subject,
+            message: plainTextMessage
         };
-
-        try{
-            const res = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${senderEmail}/sent.json`, objSent);
-            if (res.status === 200){
-                const data = await res.data;
-                const backRes = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${senderEmail}/sent/${data.name}.json`, {id: data.name});
-                if (backRes.status === 200){
-                    dispatch(emailActions.sentBox({
-                        id: data.name,
-                        to: enteredEmail,
-                        subject: objSent.subject,
-                        message: objSent.message
-                    }))
-                    alert("Send successfully")
-                }
-            }
-        }catch(error){
-            console.log(error)
-            alert("failed to send message")
-        }
         const objReceived = {
             from: senderEmail,
-            subject: enteredSubject,
-            message: message,
+            subject,
+            message: plainTextMessage,
+            read: false
         }
         try{
-            const res = await axios.post(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${receiverEmail}/received.json`, objReceived);
-            if (res.status === 200){
-                const data = await res.data
-                const backRes = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${receiverEmail}/received/${data.name}.json`, {id:data.name, read: true});
-                if (backRes.status === 200){
-                    dispatch(emailActions.recievedEmails({
-                        id: data.name,
-                        from: enteredEmail,
-                        subject: objReceived.subject,
-                        message: objReceived.message,
-                        read: true
-                    }))
-                }
+            const res1 = await axios.post(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${senderEmail}/sent.json`, objSent);
+            const res2 = await axios.post(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${receiverEmail}/received.json`, objReceived);
+            if (res1.status === 200 && res2.status === 200){
+                dispatch(emailActions.sentBox(
+                    {...objSent, id: res1.data.name}
+                ))
+                dispatch(emailActions.recievedEmails(
+                    {...objReceived, id: res2.data.name}
+                ))
+                alert("Send successfully");
+                setToEmail('')
+                setSubject('')
+                setMessage('')
+            }else{
+                alert("Failed to send message");
             }
         }catch(error){
-            console.log(error)
-            alert("failed")
+            // console.log(error)
+            alert("Failed to send message");
         }
-        emailInputRef.current.value = '';
-        subjectInputRef.current.value = '';
-        setEditorState(() => EditorState.createEmpty()) 
 
     }
-
-
-    return (
-    <div style={{maxWidth: "40rem", margin: "2rem auto"}} >
+  return (
+    <div className='compose-mail'>
         <Form onSubmit={submitHandler}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>To</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                required
-                ref={emailInputRef}
-                className="bg-light"
-              />
+            <Form.Group className="mb-3" controlId="exampleForm.to">
+                <Form.Label>To</Form.Label>
+                <Form.Control 
+                    type="email" 
+                    placeholder="example@gmail.com" 
+                    value={toEmail}
+                    onChange={(e) => setToEmail(e.target.value)}
+                />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicSubject">
-              <Form.Label>Subject</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Subject"
-                required
-                ref={subjectInputRef}
-                className="bg-light"
-              />
+            <Form.Group className="mb-3" controlId="exampleForm.subject">
+                <Form.Label>Subject</Form.Label>
+                <Form.Control 
+                    type="text" 
+                    placeholder="Enter subject" 
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formBasicMessage">
-              <Form.Label>message</Form.Label>
-
-              <Editor
-                editorState={editorState}
-                onEditorStateChange={messageHandler}
-                toolbarClassName="toolbarClassName"
-                wrapperClassName="wrapperClassName"
-                editorClassName="editorClassName"
-                wrapperStyle={{
-                  border: "1px solid black",
-                  borderRadius: "5px",
-                  minHeight: "250px",
-                }}
-                />;
-            </Form.Group>
-            <Button type="submit">Send</Button>
+            <hr />
+            <RichTextEditor 
+                value={message}
+                onChange={value => setMessage(value)}
+            />
+            <Button className='mt-2' type="submit">Send</Button>
         </Form>
     </div>
   )
 }
-
 
 export default ComposeMail

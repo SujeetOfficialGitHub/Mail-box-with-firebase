@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { authActions } from '../store/authSlice'
-
+import './Login.css'
 const Login = () => {
     const [error, setError] = useState()
     const inputEmailRef = useRef()
@@ -18,22 +18,21 @@ const Login = () => {
         const email = inputEmailRef.current.value;
         const password = inputPasswordRef.current.value;
         try{
-            const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDnOhETHoXsPijC-qmGQwUAOmngQVCJ3N4`,
+            const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FIREBASE_API_KEY}`,
             {email: email, password: password, returnSecureToken: true})
             if (res.status === 200){
-                console.log(res)
                 const data = await res.data
                 inputEmailRef.current.value = '';
                 inputPasswordRef.current.value = '';
 
-                dispatch(authActions.login({token: data.token, email: data.email}))
+                dispatch(authActions.login({token: data.idToken, email: data.email}))
                 console.log("Login successfully")
                 navigate('/')
             }else{
                 throw new Error('Registration Failed')
             }
         }catch(error){
-            console.log(error)
+            // console.log(error)
             setError(error.message)
         }
     }
@@ -43,7 +42,7 @@ const Login = () => {
         }, 10000)
     }
   return (
-    <div className='w-50 mx-auto m-3 p-3 border'>
+    <div className='login mx-auto border'>
         <h3 className='text-center'>Login</h3>
         {error && <p className='bg-danger text-light text-center'>{error}</p>}
         <Form onSubmit={(submitHandler)}>

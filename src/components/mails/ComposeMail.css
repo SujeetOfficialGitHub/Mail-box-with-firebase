@@ -1,0 +1,12 @@
+.compose-mail{
+    margin: auto;
+    padding: 1rem;
+    border: 5px solid black;
+    border-image: linear-gradient(to right, #ff00cc, #3333ff) 1;
+    max-width: 30rem;
+}
+@media (max-width: 576px){
+    .compose-mail{
+        margin: 0rem 3%;
+    }
+}

@@ -8,19 +8,23 @@ const SentMails = () => {
   const [sentAllMails, setsentAllMails] = useState([])
 
   const email = useSelector(state => state.auth.email)
-  const remail = useSelector(state => state.email)
+  const mails = useSelector(state => state.mails)
 
     useEffect(() => {
         const fetchAllSentMails = async() => {
           try{
-            const {data} = await axios.get(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/sent.json`);
+            const res = await axios.get(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${email}/sent.json`);
+            const data = [];
+            for (let key in res.data){
+              data.push({...res.data[key], id: key})
+            }
             setsentAllMails(data)
           }catch(error){
-            console.log(error)
+            // console.log(error)
           }
         }
         fetchAllSentMails()
-    },[email, remail])
+    },[email, mails])
     if (sentAllMails === null){
       return <h1>No mails found</h1>
 

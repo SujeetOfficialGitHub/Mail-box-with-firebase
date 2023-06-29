@@ -1,0 +1,10 @@
+.login{
+    max-width: 30rem;
+    padding: 15px;
+    margin-top: 20px;
+}
+@media (max-width: 576px){
+    .login{
+        margin: 20px 3% !important;
+    }   
+}

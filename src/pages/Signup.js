@@ -4,6 +4,7 @@ import { Form, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { authActions } from '../store/authSlice'
+import './Signup.css'
 
 const Signup = () => {
     const [error, setError] = useState()
@@ -21,14 +22,14 @@ const Signup = () => {
         const cPassowrd = inputCPasswordRef.current.value;
         if (password === cPassowrd){
             try{
-                const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDnOhETHoXsPijC-qmGQwUAOmngQVCJ3N4`,
+                const res = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_API_KEY}`,
                 {email: email, password: password, returnSecureToken: true})
                 if (res.status === 200){
                     const data = await res.data
                     inputEmailRef.current.value = '';
                     inputPasswordRef.current.value = '';
-                    dispatch(authActions.login({token: data.token, email: data.email}))
-                    console.log("Sign up successfully")
+                    dispatch(authActions.signup({token: data.token, email: data.email}))
+                    // console.log("Sign up successfully")
                     navigate('/')
                 }else{
                     throw new Error('Registration Failed')
@@ -36,9 +37,8 @@ const Signup = () => {
             }catch(error){
                 setError(error.response.data.error.message)
             }
-
         }else{
-            setError("Password Not match")
+            setError("Invalid email and password")
         }
     }
     if (error){
@@ -47,7 +47,7 @@ const Signup = () => {
         }, 10000)
     }
   return (
-    <div className='w-50 mx-auto m-3 p-3 border'>
+    <div className='signup mx-auto border'>
         <h3 className='text-center'>Signup</h3>
         {error && <p className='bg-danger text-light text-center'>{error}</p>}
         <Form onSubmit={(submitHandler)}>

@@ -1,12 +1,13 @@
 
 import ReceivedMailView from './ReceivedMailsView'
-import ReceivedMailRequest from '../../http/received-mail'
+import useReceivedMailRequest from '../../http/received-mail'
 
 const Inbox = () => {
-    const receivedAllMails = ReceivedMailRequest()
+    const receivedAllMails = useReceivedMailRequest();
     if (receivedAllMails.length === 0){
         return <h1>No mails found</h1>
     }
+    // console.log(receivedAllMails)
 
   return (
     <div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';

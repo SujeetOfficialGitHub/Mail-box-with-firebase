@@ -13,7 +13,7 @@ const ReceivedMailsView = (props) => {
     
     const handleShow = async() => {
         try{
-            const res = await axios.patch(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`,{read: false});
+            const res = await axios.patch(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${email}/received/${props.id}.json`,{read: true});
             if (res.status === 200){
                 setShow(true);
                 dispatch(emailActions.recievedEmails({...props, read: false}))
@@ -21,10 +21,11 @@ const ReceivedMailsView = (props) => {
         }catch(error){
             console.log(error)
         }
+        setShow(true); 
     }
     const handleDelete = async() => {
         try{
-            const res = await axios.delete(`https://mail-box-a39e6-default-rtdb.firebaseio.com/email-box/${email}/received/${props.id}.json`);
+            const res = await axios.delete(`https://${process.env.REACT_APP_FIREBASE_PROJECT_ID}.firebaseio.com/email-box/${email}/received/${props.id}.json`);
             if (res.status === 200){
                 dispatch(emailActions.deleteMail({...props}))
                 console.log('Email deleted successfully')
@@ -38,7 +39,7 @@ const ReceivedMailsView = (props) => {
         setShow(false)
     }
 
-    let seenCheck = checkread === true ? "🔵 " : " ";
+    let seenCheck = checkread === false ? "🔵 " : " ";
   return (
     <div key={props.id} className='border mx-auto m-2 p-1' style={{maxWidth: '30rem', cursor: 'pointer'}}>
         <div variant="primary" onClick={handleShow}>

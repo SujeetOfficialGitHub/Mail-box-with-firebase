@@ -10,15 +10,14 @@ const AuthSlice = createSlice({
     initialState: initialAuthState,
     reducers: {
         signup(state, action){
-            state.isLoggedIn = true;
+            state.isLoggedIn = true ? action.payload.token : false
             state.email = action.payload.email.replace('@','').replace('.','');
             state.token = action.payload.token;
             localStorage.setItem('email', action.payload.email.replace('@','').replace('.',''))
-            localStorage.setItem('token',action.payload.token)
+            localStorage.setItem('token', action.payload.token)
         },
         login(state, action){
-            state.isLoggedIn = true;
-            console.log(action)
+            state.isLoggedIn = true ? action.payload.token : false
             state.email = action.payload.email.replace('@','').replace('.','');
             state.token = action.payload.token;
             localStorage.setItem('email', action.payload.email.replace('@','').replace('.',''))
